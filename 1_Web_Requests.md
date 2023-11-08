@@ -245,7 +245,7 @@ Finally, the response may end with a response body, which is separated by a new 
 In our earlier examples with cURL, we only specified the URL and got the response body in return. However, cURL also allows us to preview the full HTTP request and the full HTTP response, which can become very handy when performing web penetration tests or writing exploits. To view the full HTTP request and response, we can simply add the `-v` verbose flag to our earlier commands, and it should print both the request and response:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl inlanefreight.com -v
+user@htb[/htb]$ curl inlanefreight.com -v
 
 *   Trying SERVER_IP:80...
 * TCP_NODELAY set
@@ -404,7 +404,7 @@ In the previous section, we saw how using the `-v` flag with cURL shows us the f
 The following command shows an example output of using the `-I` flag:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl -I https://www.inlanefreight.com
+user@htb[/htb]$ curl -I https://www.inlanefreight.com
 
 Host: www.inlanefreight.com
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko)
@@ -431,7 +431,7 @@ Referrer-Policy: origin
 In addition to viewing headers, cURL also allows us to set request headers with the `-H` flag, as we will see in a later section. Some headers, like the `User-Agent` or `Cookie` headers, have their own flags. For example, we can use the `-A` to set our `User-Agent`, as follows:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl https://www.inlanefreight.com -A 'Mozilla/5.0'
+user@htb[/htb]$ curl https://www.inlanefreight.com -A 'Mozilla/5.0'
 
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -542,7 +542,7 @@ Once we enter the credentials, we would get access to the page:
 Let's try to access the page with cURL, and we'll add `-i` to view the response headers:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl -i http://<SERVER_IP>:<PORT>/
+user@htb[/htb]$ curl -i http://<SERVER_IP>:<PORT>/
 HTTP/1.1 401 Authorization Required
 Date: Mon, 21 Feb 2022 13:11:46 GMT
 Server: Apache/2.4.41 (Ubuntu)
@@ -557,7 +557,7 @@ Access denied
 As we can see, we get `Access denied` in the response body, and we also get `Basic realm="Access denied"` in the `WWW-Authenticate` header, which confirms that this page indeed uses `basic HTTP auth`, as discussed in the Headers section. To provide the credentials through cURL, we can use the `-u` flag, as follows:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl -u admin:admin http://<SERVER_IP>:<PORT>/
+user@htb[/htb]$ curl -u admin:admin http://<SERVER_IP>:<PORT>/
 
 <!DOCTYPE html>
 <html lang="en">
@@ -569,7 +569,7 @@ mlitsey@htb[/htb]$ curl -u admin:admin http://<SERVER_IP>:<PORT>/
 This time we do get the page in the response. There is another method we can provide the `basic HTTP auth` credentials, which is directly through the URL as (`username:password@URL`), as we discussed in the first section. If we try the same with cURL or our browser, we do get access to the page as well:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl http://admin:admin@<SERVER_IP>:<PORT>/
+user@htb[/htb]$ curl http://admin:admin@<SERVER_IP>:<PORT>/
 
 <!DOCTYPE html>
 <html lang="en">
@@ -589,7 +589,7 @@ We may also try visiting the same URL on a browser, and we should get authentica
 If we add the `-v` flag to either of our earlier cURL commands:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl -v http://admin:admin@<SERVER_IP>:<PORT>/
+user@htb[/htb]$ curl -v http://admin:admin@<SERVER_IP>:<PORT>/
 
 *   Trying <SERVER_IP>:<PORT>...
 * Connected to <SERVER_IP> (<SERVER_IP>) port PORT (#0)
@@ -624,7 +624,7 @@ As we are using `basic HTTP auth`, we see that our HTTP request sets the `Author
 Let's try to manually set the `Authorization`, without supplying the credentials, to see if it does allow us access to the page. We can set the header with the `-H` flag, and will use the same value from the above HTTP request. We can add the `-H` flag multiple times to specify multiple headers:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://<SERVER_IP>:<PORT>/
+user@htb[/htb]$ curl -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://<SERVER_IP>:<PORT>/
 
 <!DOCTYPE html
 <html lang="en">
@@ -658,7 +658,7 @@ Now, we can send the same request directly to `search.php` to get the full searc
 To send a GET request with cURL, we can use the exact same URL seen in the above screenshots since GET requests place their parameters in the URL. However, browser devtools provide a more convenient method of obtaining the cURL command. We can right-click on the request and select `Copy>Copy as cURL`. Then, we can paste the copied command in our terminal and execute it, and we should get the exact same response:
 
 ```shell-session
-mlitsey@htb[/htb]$ curl 'http://<SERVER_IP>:<PORT>/search.php?search=le' -H 'Authorization: Basic YWRtaW46YWRtaW4='
+user@htb[/htb]$ curl 'http://<SERVER_IP>:<PORT>/search.php?search=le' -H 'Authorization: Basic YWRtaW46YWRtaW4='
 
 Leeds (UK)
 Leicester (UK)
@@ -713,3 +713,334 @@ So, let's see some examples of how POST requests work, and how we can utilize to
 ## Login Forms
 
 The exercise at the end of this section is similar to the example we saw in the GET section. However, once we visit the web application, we see that it utilizes a PHP login form instead of HTTP basic auth:
+
+![](https://academy.hackthebox.com/storage/modules/35/web_requests_post_login.jpg)
+
+If we try to login with `admin`:`admin`, we get in and see a similar search function to the one we saw earlier in the GET section:
+
+![](https://academy.hackthebox.com/storage/modules/35/web_requests_login_search.jpg)
+
+If we clear the Network tab in our browser devtools and try to log in again, we will see many requests being sent. We can filter the requests by our server IP, so it would only show requests going to the web application's web server (i.e. filter out external requests), and we will notice the following POST request being sent: ![web_requests_login_request](https://academy.hackthebox.com/storage/modules/35/web_requests_login_request.jpg)
+
+We can click on the request, click on the `Request` tab (which shows the request body), and then click on the `Raw` button to show the raw request data. We see the following data is being sent as the POST request data:
+
+Code: bash
+
+```bash
+username=admin&password=admin
+```
+
+With the request data at hand, we can try to send a similar request with cURL, to see whether this would allow us to login as well. Furthermore, as we did in the previous section, we can simply right-click on the request and select `Copy>Copy as cURL`. However, it is important to be able to craft POST requests manually, so let's try to do so.
+
+We will use the `-X POST` flag to send a `POST` request. Then, to add our POST data, we can use the `-d` flag and add the above data after it, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -X POST -d 'username=admin&password=admin' http://<SERVER_IP>:<PORT>/
+
+...SNIP...
+        <em>Type a city name and hit <strong>Enter</strong></em>
+...SNIP...
+```
+
+If we examine the HTML code, we will not see the login form code, but will see the search function code, which indicates that we did indeed get authenticated.
+
+**Tip:** Many login forms would redirect us to a different page once authenticated (e.g. /dashboard.php). If we want to follow the redirection with cURL, we can use the `-L` flag.
+
+---
+
+## Authenticated Cookies
+
+If we were successfully authenticated, we should have received a cookie so our browsers can persist our authentication, and we don't need to login every time we visit the page. We can use the `-v` or `-i` flags to view the response, which should contain the `Set-Cookie` header with our authenticated cookie:
+
+```shell-session
+user@htb[/htb]$ curl -X POST -d 'username=admin&password=admin' http://<SERVER_IP>:<PORT>/ -i
+
+HTTP/1.1 200 OK
+Date: 
+Server: Apache/2.4.41 (Ubuntu)
+Set-Cookie: PHPSESSID=c1nsa6op7vtk7kdis7bcnbadf1; path=/
+
+...SNIP...
+        <em>Type a city name and hit <strong>Enter</strong></em>
+...SNIP...
+```
+
+With our authenticated cookie, we should now be able to interact with the web application without needing to provide our credentials every time. To test this, we can set the above cookie with the `-b` flag in cURL, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -b 'PHPSESSID=c1nsa6op7vtk7kdis7bcnbadf1' http://<SERVER_IP>:<PORT>/
+
+...SNIP...
+        <em>Type a city name and hit <strong>Enter</strong></em>
+...SNIP...
+```
+
+As we can see, we were indeed authenticated and got to the search function. It is also possible to specify the cookie as a header, as follows:
+
+Code: bash
+
+```bash
+curl -H 'Cookie: PHPSESSID=c1nsa6op7vtk7kdis7bcnbadf1' http://<SERVER_IP>:<PORT>/
+```
+
+We may also try the same thing with our browsers. Let's first logout, and then we should get back to the login page. Then, we can go to the `Storage` tab in the devtools with \[`SHIFT+F9`\]. In the `Storage` tab, we can click on `Cookies` in the left pane and select our website to view our current cookies. We may or may not have existing cookies, but if we were logged out, then our PHP cookie should not be authenticated, which is why if we get the login form and not the search function: ![web_requests_cookies](https://academy.hackthebox.com/storage/modules/35/web_requests_cookies.jpg)
+
+Now, let's try to use our earlier authenticated cookie, and see if we do get in without needing to provide our credentials. To do so, we can simply replace the cookie value with our own. Otherwise, we can right-click on the cookie and select `Delete All`, and the click on the `+` icon to add a new cookie. After that, we need to enter the cookie name (by double clicking the current value), which is the part before the `=` (`PHPSESSID`), and then the cookie value, which is the part after the `=` (`c1nsa6op7vtk7kdis7bcnbadf1`). Then, once our cookie is set, we can refresh the page, and we will see that we do indeed get authenticated without needing to login, simply by using an authenticated cookie: ![web_requests_auth_cookie](https://academy.hackthebox.com/storage/modules/35/web_requests_auth_cookie.jpg)
+
+As we can see, having a valid cookie may be enough to get authenticated into many web applications. This can be an essential part of some web attacks, like Cross-Site Scripting.
+
+---
+
+## JSON Data
+
+Finally, let's see what requests get sent when we interact with the `City Search` function. To do so, we will go to the Network tab in the browser devtools, and then click on the trash icon to clear all requests. Then, we can make any search query to see what requests get sent: ![web_requests_search_request](https://academy.hackthebox.com/storage/modules/35/web_requests_search_request.jpg)
+
+As we can see, the search form sends a POST request to `search.php`, with the following data:
+
+Code: json
+
+```json
+{"search":"london"}
+```
+
+The POST data appear to be in JSON format, so our request must have specified the `Content-Type` header to be `application/json`. We can confirm this by right-clicking on the request, and selecting `Copy>Copy Request Headers`:
+
+Code: bash
+
+```bash
+POST /search.php HTTP/1.1
+Host: server_ip
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://server_ip/index.php
+Content-Type: application/json
+Origin: http://server_ip
+Content-Length: 19
+DNT: 1
+Connection: keep-alive
+Cookie: PHPSESSID=c1nsa6op7vtk7kdis7bcnbadf1
+```
+
+Indeed, we do have `Content-Type: application/json`. Let's try to replicate this request as we did earlier, but include both the cookie and content-type headers, and send our request to `search.php`:
+
+```shell-session
+user@htb[/htb]$ curl -X POST -d '{"search":"london"}' -b 'PHPSESSID=c1nsa6op7vtk7kdis7bcnbadf1' -H 'Content-Type: application/json' http://<SERVER_IP>:<PORT>/search.php
+["London (UK)"]
+```
+
+As we can see, we were able to interact with the search function directly without needing to login or interact with the web application front-end. This can be an essential skill when performing web application assessments or bug bounty exercises, as it is much faster to test web applications this way.
+
+**Exercise:** Try to repeat the above request without adding the cookie or content-type headers, and see how the web app would act differently.
+
+Finally, let's try to repeat the same above request by using `Fetch`, as we did in the previous section. We can right-click on the request and select `Copy>Copy as Fetch`, and then go to the `Console` tab and execute our code there: ![web_requests_fetch_post](https://academy.hackthebox.com/storage/modules/35/web_requests_fetch_post.jpg)
+
+- If you can't paste type `allow paste` in the console
+- to see the Response make sure that XHR is active
+
+![](./Web_Requests/2023-11-08-07-07-57.png)
+![](./Web_Requests/2023-11-08-07-08-48.png)
+
+Our request successfully returns the same data we got with cURL. `Try to search for different cities by directly interacting with the search.php through Fetch or cURL.`
+
+#### Questions
+
+Answer the question(s) below to complete this Section and earn cubes!
+
+Target: 94.237.53.58:58796  
+
+Authenticate to 94.237.53.58 with user "admin" and password "admin"
+
+Obtain a session cookie through a valid login, and then use the cookie with cURL to search for the flag through a JSON POST request to '/search.php'
+
+- `curl -X POST -d '{"search":"flag"}' -b 'PHPSESSID=rr0b6b154i3e78ntq1k354765k' -H 'Content-Type: application/json' http://94.237.53.58:58796/search.php`
+
+![](./Web_Requests/2023-11-08-07-13-22.png)
+
+
+
+
+# CRUD API
+
+We saw examples of a `City Search` web application that uses PHP parameters to search for a city name in the previous sections. This section will look at how such a web application may utilize APIs to perform the same thing, and we will directly interact with the API endpoint.
+
+---
+
+## APIs
+
+There are several types of APIs. Many APIs are used to interact with a database, such that we would be able to specify the requested table and the requested row within our API query, and then use an HTTP method to perform the operation needed. For example, for the `api.php` endpoint in our example, if we wanted to update the `city` table in the database, and the row we will be updating has a city name of `london`, then the URL would look something like this:
+
+Code: bash
+
+```bash
+curl -X PUT http://<SERVER_IP>:<PORT>/api.php/city/london ...SNIP...
+```
+
+## CRUD
+
+As we can see, we can easily specify the table and the row we want to perform an operation on through such APIs. Then we may utilize different HTTP methods to perform different operations on that row. In general, APIs perform 4 main operations on the requested database entity:
+
+| Operation | HTTP Method | Description |
+| --- | --- | --- |
+| `Create` | `POST` | Adds the specified data to the database table |
+| `Read` | `GET` | Reads the specified entity from the database table |
+| `Update` | `PUT` | Updates the data of the specified database table |
+| `Delete` | `DELETE` | Removes the specified row from the database table |
+
+These four operations are mainly linked to the commonly known CRUD APIs, but the same principle is also used in REST APIs and several other types of APIs. Of course, not all APIs work in the same way, and the user access control will limit what actions we can perform and what results we can see. The [Introduction to Web Applications](https://academy.hackthebox.com/module/details/75) module further explains these concepts, so you may refer to it for more details about APIs and their usage.
+
+---
+
+## Read
+
+The first thing we will do when interacting with an API is reading data. As mentioned earlier, we can simply specify the table name after the API (e.g. `/city`) and then specify our search term (e.g. `/london`), as follows:
+
+```shell-session
+user@htb[/htb]$ curl http://<SERVER_IP>:<PORT>/api.php/city/london
+
+[{"city_name":"London","country_name":"(UK)"}]
+```
+
+We see that the result is sent as a JSON string. To have it properly formatted in JSON format, we can pipe the output to the `jq` utility, which will format it properly. We will also silent any unneeded cURL output with `-s`, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/london | jq
+
+[
+  {
+    "city_name": "London",
+    "country_name": "(UK)"
+  }
+]
+```
+
+As we can see, we got the output in a nicely formatted output. We can also provide a search term and get all matching results:
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/le | jq
+
+[
+  {
+    "city_name": "Leeds",
+    "country_name": "(UK)"
+  },
+  {
+    "city_name": "Dudley",
+    "country_name": "(UK)"
+  },
+  {
+    "city_name": "Leicester",
+    "country_name": "(UK)"
+  },
+  ...SNIP...
+]
+```
+
+Finally, we can pass an empty string to retrieve all entries in the table:
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/ | jq
+
+[
+  {
+    "city_name": "London",
+    "country_name": "(UK)"
+  },
+  {
+    "city_name": "Birmingham",
+    "country_name": "(UK)"
+  },
+  {
+    "city_name": "Leeds",
+    "country_name": "(UK)"
+  },
+  ...SNIP...
+]
+```
+
+`Try visiting any of the above links using your browser, to see how the result is rendered.`
+
+---
+
+## Create
+
+To add a new entry, we can use an HTTP POST request, which is quite similar to what we have performed in the previous section. We can simply POST our JSON data, and it will be added to the table. As this API is using JSON data, we will also set the `Content-Type` header to JSON, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -X POST http://<SERVER_IP>:<PORT>/api.php/city/ -d '{"city_name":"HTB_City", "country_name":"HTB"}' -H 'Content-Type: application/json'
+```
+
+Now, we can read the content of the city we added (`HTB_City`), to see if it was successfully added:
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/HTB_City | jq
+
+[
+  {
+    "city_name": "HTB_City",
+    "country_name": "HTB"
+  }
+]
+```
+
+As we can see, a new city was created, which did not exist before.
+
+**Exercise:** Try adding a new city through the browser devtools, by using one of the Fetch POST requests you used in the previous section.
+
+---
+
+## Update
+
+Now that we know how to read and write entries through APIs, let's start discussing two other HTTP methods we have not used so far: `PUT` and `DELETE`. As mentioned at the beginning of the section, `PUT` is used to update API entries and modify their details, while `DELETE` is used to remove a specific entity.
+
+**Note:** The HTTP `PATCH` method may also be used to update API entries instead of `PUT`. To be precise, `PATCH` is used to partially update an entry (only modify some of its data "e.g. only city\_name"), while `PUT` is used to update the entire entry. We may also use the HTTP `OPTIONS` method to see which of the two is accepted by the server, and then use the appropriate method accordingly. In this section, we will be focusing on the `PUT` method, though their usage is quite similar.
+
+Using `PUT` is quite similar to `POST` in this case, with the only difference being that we have to specify the name of the entity we want to edit in the URL, otherwise the API will not know which entity to edit. So, all we have to do is specify the `city` name in the URL, change the request method to `PUT`, and provide the JSON data like we did with POST, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -X PUT http://<SERVER_IP>:<PORT>/api.php/city/london -d '{"city_name":"New_HTB_City", "country_name":"HTB"}' -H 'Content-Type: application/json'
+```
+
+We see in the example above that we first specified `/city/london` as our city, and passed a JSON string that contained `"city_name":"New_HTB_City"` in the request data. So, the london city should no longer exist, and a new city with the name `New_HTB_City` should exist. Let's try reading both to confirm:
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/london | jq
+```
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/New_HTB_City | jq
+
+[
+  {
+    "city_name": "New_HTB_City",
+    "country_name": "HTB"
+  }
+]
+```
+
+Indeed, we successfully replaced the old city name with the new city.
+
+**Note:** In some APIs, the `Update` operation may be used to create new entries as well. Basically, we would send our data, and if it does not exist, it would create it. For example, in the above example, even if an entry with a `london` city did not exist, it would create a new entry with the details we passed. In our example, however, this is not the case. Try to update a non-existing city and see what you would get.
+
+---
+
+## DELETE
+
+Finally, let's try to delete a city, which is as easy as reading a city. We simply specify the city name for the API and use the HTTP `DELETE` method, and it would delete the entry, as follows:
+
+```shell-session
+user@htb[/htb]$ curl -X DELETE http://<SERVER_IP>:<PORT>/api.php/city/New_HTB_City
+```
+
+```shell-session
+user@htb[/htb]$ curl -s http://<SERVER_IP>:<PORT>/api.php/city/New_HTB_City | jq
+[]
+```
+
+As we can see, after we deleted `New_HTB_City`, we get an empty array when we try reading it, meaning it no longer exists.
+
+**Exercise:** Try to delete any of the cities you added earlier through POST requests, and then read all entries to confirm that they were successfully deleted.
+
+With this, we are able to perform all 4 `CRUD` operations through cURL. In a real web application, such actions may not be allowed for all users, or it would be considered a vulnerability if anyone can modify or delete any entry. Each user would have certain privileges on what they can `read` or `write`, where `write` refers to adding, modifying, or deleting data. To authenticate our user to use the API, we would need to pass a cookie or an authorization header (e.g. JWT), as we did in an earlier section. Other than that, the operations are similar to what we practiced in this section.
+
