@@ -836,11 +836,27 @@ As we can see, we were able to interact with the search function directly withou
 
 Finally, let's try to repeat the same above request by using `Fetch`, as we did in the previous section. We can right-click on the request and select `Copy>Copy as Fetch`, and then go to the `Console` tab and execute our code there: ![web_requests_fetch_post](https://academy.hackthebox.com/storage/modules/35/web_requests_fetch_post.jpg)
 
-- If you can't paste type `allow paste` in the console
+- If you can't paste type `allow pasting` in the console
 - to see the Response make sure that XHR is active
 
-![](./Web_Requests/2023-11-08-07-07-57.png)
+![](./Web_Requests/2023-11-08-07-25-47.png)
 ![](./Web_Requests/2023-11-08-07-08-48.png)
+
+```
+await fetch("http://94.237.53.58:58796/search.php", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Content-Type": "application/json"
+    },
+    "referrer": "http://94.237.53.58:58796/index.php",
+    "body": "{\"search\":\"london\"}",
+    "method": "POST",
+    "mode": "cors"
+});
+```
 
 Our request successfully returns the same data we got with cURL. `Try to search for different cities by directly interacting with the search.php through Fetch or cURL.`
 
