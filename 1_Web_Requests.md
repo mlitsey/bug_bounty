@@ -1004,6 +1004,21 @@ As we can see, a new city was created, which did not exist before.
 
 **Exercise:** Try adding a new city through the browser devtools, by using one of the Fetch POST requests you used in the previous section.
 
+```json
+await fetch("http://94.237.59.185:38968/api.php/city", {
+    "credentials": "omit",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Upgrade-Insecure-Requests": "1"
+    },
+    "method": "POST",
+    "mode": "cors",
+    "body": "{\"city_name\":\"Second_HTB_City\",\"country_name\":\"UK\"}",
+});
+```
+
 ---
 
 ## Update
@@ -1059,4 +1074,28 @@ As we can see, after we deleted `New_HTB_City`, we get an empty array when we tr
 **Exercise:** Try to delete any of the cities you added earlier through POST requests, and then read all entries to confirm that they were successfully deleted.
 
 With this, we are able to perform all 4 `CRUD` operations through cURL. In a real web application, such actions may not be allowed for all users, or it would be considered a vulnerability if anyone can modify or delete any entry. Each user would have certain privileges on what they can `read` or `write`, where `write` refers to adding, modifying, or deleting data. To authenticate our user to use the API, we would need to pass a cookie or an authorization header (e.g. JWT), as we did in an earlier section. Other than that, the operations are similar to what we practiced in this section.
+
+#### Questions
+
+Answer the question(s) below to complete this Section and earn cubes!
+
+Target: 94.237.56.76:31283  
+
+First, try to update any city's name to be 'flag'. Then, delete any city. Once done, search for a city named 'flag' to get the flag.
+
+- I tried to use UPDATE but it didn't work, then I had to reset the target to get the solution working. I think this is because I was usign the target as a walkthough while reading the section. 
+- `curl -X PUT http://94.237.59.185:38968/api.php/city/Baltimore -d '{"city_name":"flag", "country_name":"US"}' -H 'Content-Type: application/json'`
+- `curl -X DELETE http://94.237.59.185:38968/api.php/city/Detroit`
+- `curl -s http://94.237.59.185:38968/api.php/city/flag |jq`
+```json
+[
+  {
+    "city_name": "flag",
+    "country_name": "HTB{crud...........}"
+  }
+]
+```
+
+
+
 
