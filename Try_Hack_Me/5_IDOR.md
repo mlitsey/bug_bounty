@@ -131,16 +131,16 @@ What is the username for user id 1?
 - double click on the "cutomer?id" to open in a new tab. Then edit the URL. 
 - adam84
 
-![](./5_assets/2023-12-06-06-35-13.png)
+![Chrome](./5_assets/2023-12-06-06-35-13.png)
 
-![](./5_assets/2023-12-06-06-51-29.png)
+![Firefox](./5_assets/2023-12-06-06-51-29.png)
 
-![](./5_assets/2023-12-06-06-36-27.png)
+![Chrome](./5_assets/2023-12-06-06-36-27.png)
 
 What is the email address for user id 3?
 
 - j@fakemail.thm
 
-![](./5_assets/2023-12-06-06-53-47.png)
+![Firefox](./5_assets/2023-12-06-06-53-47.png)
 
 
